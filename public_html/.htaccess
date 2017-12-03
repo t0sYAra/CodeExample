@@ -1,0 +1,12 @@
+RewriteEngine on
+RewriteBase /
+
+RewriteCond %{HTTP_HOST} ^antonpavlov\.ru$ [NC]
+RewriteCond %{REQUEST_URI} !^/robots\.txt$
+RewriteRule ^(.*)$ http://www\.antonpavlov\.ru/$1 [R=301,L]
+
+RewriteRule ^entries/([-_0-9a-zA-Z]+)$ blog/$1 [R=301] [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* index.php [L]
