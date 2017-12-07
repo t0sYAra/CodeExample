@@ -46,7 +46,7 @@ class PictureController extends Controller
         if (file_exists($path.$fileName)) {
             header('Content-Type: image/'.$picture['type']);
             readfile($path.$fileName);
-            return false;
+            die;
         }
         
         (new ErrorController())->showPicPage404();

@@ -53,6 +53,12 @@ class RouteRules
                 'include' => ''
             ],
             [
+                'regExp' => '\/audio\/([1-9][0-9]{0,10})\/[1-9][0-9]{0,10}.mp3\/?',
+                'controller' => 'AudioController',
+                'action' => 'loadAudioFile',
+                'include' => ''
+            ],
+            [
                 'regExp' => '\/captcha\/?',
                 'controller' => 'CaptchaController',
                 'action' => 'generateCaptcha',

@@ -54,5 +54,12 @@ class ErrorController extends Controller
 		header('Status: 404 Not Found');
         die;
     }
+
+    public function showAudPage404()
+    {
+        header('HTTP/1.1 404 Not Found');
+		header('Status: 404 Not Found');
+        die;
+    }
    
 }
