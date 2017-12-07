@@ -28,7 +28,7 @@ class CaptchaController extends Controller
         $im = ImageCreate($width, $height);
         
         if (!$im) {
-            ErrorController::showPage404();
+            (new ErrorController())->showPage404();
         }
         
         $fon = ImageColorAllocate($im, $cvet1, $cvet2, $cvet3);

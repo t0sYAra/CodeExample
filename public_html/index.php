@@ -18,13 +18,13 @@ spl_autoload_register('AntonPavlov\PersonalSite\autoLoader');
 try {
     Route::validateRequest();
 } catch (Page403Exception $e) {
-    ErrorController::showPage403();
+    (new ErrorController())->showPage403();
 }
 
 try {
     Route::start();
 } catch (Page404Exception $e) {
-    ErrorController::showPage404();
+    (new ErrorController())->showPage404();
 }
 
 

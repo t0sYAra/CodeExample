@@ -23,7 +23,7 @@ class PictureController extends Controller
             $picture = $pic->get($entryId, $picId);
         } catch (\Exception $e) {
             // ошибка во время запроса к БД
-            ErrorController::showPage404();
+            (new ErrorController())->showPicPage404();
         }
 
         // получаем транслитерированные данные из БД
@@ -32,7 +32,7 @@ class PictureController extends Controller
             $entry = $entr->getTranslit($entryId);
         } catch (\Exception $e) {
             // ошибка во время запроса к БД
-            ErrorController::showPage404();
+            (new ErrorController())->showPicPage404();
         }
 
         if ($pictureSize == 1) {
@@ -49,7 +49,7 @@ class PictureController extends Controller
             return false;
         }
         
-        ErrorController::showPage404();
+        (new ErrorController())->showPicPage404();
 	}
 
 	

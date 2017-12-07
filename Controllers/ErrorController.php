@@ -12,23 +12,47 @@ class ErrorController extends Controller
         
     }
 
-    public static function showPage403()
+    public function showPage403()
     {
-        echo '403';
-        die;
         header('HTTP/1.1 403 Frobidden');
 		header('Status: 403 Frobidden');
+        $this->view->includeViewFile
+        (
+            'error403.php', // файл с контентом
+            'mainTemplate.php', // шаблон
+            '', // js-files
+            '', // prefetch
+            [
+                'title' => 'Доступ запрещён', // здесь и далее - дополнительные данные
+                'description' => 'Доступ запрещён',
+            ]
+        );
         die;
     }
-    
-       
-    public static function showPage404()
+
+    public function showPage404()
     {
-        echo '404';
+        header('HTTP/1.1 404 Not Found');
+		header('Status: 404 Not Found');
+        $this->view->includeViewFile
+        (
+            'error404.php', // файл с контентом
+            'mainTemplate.php', // шаблон
+            '', // js-files
+            '', // prefetch
+            [
+                'title' => 'Не найдено', // здесь и далее - дополнительные данные
+                'description' => 'Запрашиваемая страница не найдена',
+            ]
+        );
         die;
+    }
+
+    public function showPicPage404()
+    {
         header('HTTP/1.1 404 Not Found');
 		header('Status: 404 Not Found');
         die;
     }
-    
+   
 }

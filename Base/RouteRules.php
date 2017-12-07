@@ -5,6 +5,7 @@ class RouteRules
 {    
     private static $rules;
     private static $redirectRules;
+    private static $forbiddenRules;
     
     public static function getRules()
     {
@@ -586,6 +587,34 @@ class RouteRules
             ]
         ];
         return self::$redirectRules;
+    }
+ 
+    public static function forbiddenRules()
+    {
+        self::$forbiddenRules = [
+            '^.*proc\/self.*$',
+            '^.*(http|ftp|telnet)s?.*$',
+            '^.*SERVER.*$',
+            '^.*DOCUMENT.*$',
+            '^.*root.*$',
+            '^.*webmaster.*$',
+            '^.*etc.*$',
+            '^.*script.*$',
+            '^.*passwd.*$',
+            '^.*act.*$',
+            '^.*post.*$',
+            '^.*get.*$',
+            '^.*select.*$',
+            '^.*insert.*$',
+            '^.*drop.*$',
+            '^.*update.*$',
+            '^.*replace.*$',
+            '^.*cookie.*$',
+            '^.*howtolisten.*$',
+            '^.*respon.*$',
+            '^.*\.^(jpg|png|gif).*$'
+        ];
+        return self::$forbiddenRules;
     }
        
 }

@@ -13,10 +13,28 @@ class Controller
         $this->init();
         $this->view = new View();
 	}
+
+    private function initialInputCleaning(&$el)
+    {
+        if (is_array($el)) {
+            foreach($el as $k => $v) {
+                initialInputCleaning($el[$k]); 
+            }
+        } else {
+            $el = stripslashes($el);
+        }
+    }
     
     protected function init()
     {
-        // инициализируем глобальные данные для всего приложения
+        // очищаем входные данные
+        if (get_magic_quotes_gpc()) {
+			initialInputCleaning($_GET);
+			initialInputCleaning($_POST);
+			initialInputCleaning($_COOKIE); 
+			initialInputCleaning($_REQUEST);
+            initialInputCleaning($_SERVER);
+		}
         
         // включаем реестр
         $reg = Registry::init();

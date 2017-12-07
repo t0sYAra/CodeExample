@@ -8,15 +8,17 @@ class Route
 {
     public static function validateRequest()
     {
-        // по умолчанию - всё ок
-        $requestOK = true;
-
-        // здесь будут правила валидации
+        $forbiddenRules = RouteRules::forbiddenRules();
         
-        // выкидываем пользователя, если нам что-то не понравилось
-        if (!$requestOK) {
-            throw new Page403Exception();
+        // получаем строку запроса
+        $path = $_SERVER['REQUEST_URI'];
+
+        for ($i = 0; $i < count ($forbiddenRules); $i++) {
+            if (preg_match('/'.$forbiddenRules[$i].'/siu',$path) == 1) {
+                throw new Page403Exception();
+            }
         }
+
     }
         
     private static function applyRedirectRules($redirectRules)

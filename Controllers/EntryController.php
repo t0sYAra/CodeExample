@@ -72,7 +72,7 @@ class EntryController extends Controller
         try {
             $entryArr = $entry->getMain($nameTranslitted);
         } catch (Page404Exception $e) {
-            ErrorController::showPage404();
+            (new ErrorController())->showPage404();
         } catch (\Exception $e) {
             $this->view->includeViewFile
                 (
