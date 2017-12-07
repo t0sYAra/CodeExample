@@ -1,7 +1,8 @@
-<?
+<?php
 namespace AntonPavlov\PersonalSite\Base;
 
 use AntonPavlov\PersonalSite\Base\Formatter;
+use AntonPavlov\PersonalSite\Base\RandomHelper;
 
 trait Validation
 {
@@ -45,7 +46,7 @@ trait Validation
         // проверяем капчу
         if (preg_match('/captcha/siu',$valueArr['rules'])===1) {
             if (!isset($_SESSION['icndhcak'])) {
-                $_SESSION['icndhcak'] = random_int(1000, 9999).'a';
+                $_SESSION['icndhcak'] = RandomHelper::getRandomNum(1000, 9999).'a';
             }
             if ($valueArr['value']!==$_SESSION['icndhcak']) {
                 $error[] = 'Введите правильный код с картинки';

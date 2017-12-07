@@ -2,6 +2,7 @@
 namespace AntonPavlov\PersonalSite\Controllers;
 
 use AntonPavlov\PersonalSite\Base\Controller;
+use AntonPavlov\PersonalSite\Base\RandomHelper;
 
 class IndexController extends Controller
 {
@@ -16,7 +17,7 @@ class IndexController extends Controller
             [
                 'title' => 'Антон Павлов - личный сайт', // здесь и далее - дополнительные данные
                 'description' => 'Главная страница сайта',
-                'mainImg' => 'antonpavlov'.random_int(0,2).'.jpg'
+                'mainImg' => 'antonpavlov'.RandomHelper::getRandomNum(0,2).'.jpg'
             ]
         );
 	}

@@ -1,4 +1,3 @@
-<?=$additionalJStext?>
 <div class="content1">
 
 <p class="abzac1"><?=$errors?></p>

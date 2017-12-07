@@ -22,6 +22,14 @@ var ifShowMobMenu=1;
 <?=$jsFiles?>
 <?=$prefetchFiles?>
 <link href="<?=$pathStart?>css/styles.css" rel="stylesheet" type="text/css">
+<link rel="apple-touch-icon" sizes="180x180" href="<?=$pathStart?>img/favicon/apple-touch-icon.png?v=kPxM4w57bz">
+<link rel="icon" type="image/png" sizes="32x32" href="<?=$pathStart?>img/favicon/favicon-32x32.png?v=kPxM4w57bz">
+<link rel="icon" type="image/png" sizes="192x192" href="<?=$pathStart?>img/favicon/android-chrome-192x192.png?v=kPxM4w57bz">
+<link rel="icon" type="image/png" sizes="16x16" href="<?=$pathStart?>img/favicon/favicon-16x16.png?v=kPxM4w57bz">
+<link rel="manifest" href="<?=$pathStart?>img/favicon/manifest.json?v=kPxM4w57bz">
+<link rel="mask-icon" href="<?=$pathStart?>img/favicon/safari-pinned-tab.svg?v=kPxM4w57bz" color="#fc973d">
+<link rel="shortcut icon" href="<?=$pathStart?>favicon.ico?v=kPxM4w57bz">
+<meta name="theme-color" content="#ffffff">
 </head>
 
 <body onLoad="loadQualitivePics();" id="body" name="body">

@@ -1,4 +1,4 @@
-<?
+<?php
 namespace AntonPavlov\PersonalSite\Base;
 
 class Controller

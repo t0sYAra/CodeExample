@@ -9,6 +9,8 @@ use AntonPavlov\PersonalSite\Exceptions\Page404Exception;
 function autoLoader($name)
 {
     $name = preg_replace('/^AntonPavlov\\\\PersonalSite\\\\(.*)/siu', "$1", $name);
+    $name = preg_replace('/\\\\/siu', "/", $name);
+    $name = preg_replace('/(\/)+/siu', "/", $name);
     require_once '../'.$name.'.php';
 }
 

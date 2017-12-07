@@ -1,4 +1,4 @@
-<?
+<?php
 namespace AntonPavlov\PersonalSite\Models;
 
 use AntonPavlov\PersonalSite\Base\Registry;

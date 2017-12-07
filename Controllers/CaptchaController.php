@@ -5,17 +5,17 @@ use AntonPavlov\PersonalSite\Controllers\ErrorController;
 use AntonPavlov\PersonalSite\Base\Controller;
 use AntonPavlov\PersonalSite\Models\PictureModel;
 use AntonPavlov\PersonalSite\Models\EntryModel;
+use AntonPavlov\PersonalSite\Base\RandomHelper;
 
 class CaptchaController extends Controller
 {
     
     function generateCaptcha()
     {
-        session_start();
         if (isset($_SESSION['icndhcak'])) {
             unset($_SESSION['icndhcak']);
         }
-        $_SESSION['icndhcak'] = random_int(10000, 99999);
+        $_SESSION['icndhcak'] = RandomHelper::getRandomNum(10000, 99999);
 
         $cvet = '243243243';
         
@@ -37,25 +37,25 @@ class CaptchaController extends Controller
         $kod = '';
         for ($i = 0; $i < 5; $i++)
         {
-            $cifra = random_int(2, 9);
+            $cifra = RandomHelper::getRandomNum(2, 9);
             $kod = $kod.$cifra;
-            ImageTTFText($im, 25, random_int(-1, 1)*7, 2 + $i * 13, $height - 3, $textcolor, 'img/arial.ttf', $cifra);
+            ImageTTFText($im, 25, RandomHelper::getRandomNum(-1, 1)*7, 2 + $i * 13, $height - 3, $textcolor, 'img/arial.ttf', $cifra);
         }
         $_SESSION['icndhcak'] = $kod;
 
         ImageFill($im, 0, 0, $fon);
         
-        $randx3 = random_int(4, 7);
-        $randy3 = random_int(4, 26);
-        $randx4 = random_int(67, 70);
-        $randy4 = random_int(11, 19);
+        $randx3 = RandomHelper::getRandomNum(4, 7);
+        $randy3 = RandomHelper::getRandomNum(4, 26);
+        $randx4 = RandomHelper::getRandomNum(67, 70);
+        $randy4 = RandomHelper::getRandomNum(11, 19);
         
         for ($i = 0; $i < 5; $i++)
         {
-            $x = random_int(0, $width - 30);
-            $y = random_int(0, $height);
-            $xadd = random_int(30, 50);
-            $yadd = random_int(-10, 10);
+            $x = RandomHelper::getRandomNum(0, $width - 30);
+            $y = RandomHelper::getRandomNum(0, $height);
+            $xadd = RandomHelper::getRandomNum(30, 50);
+            $yadd = RandomHelper::getRandomNum(-10, 10);
             ImageLine($im, $x, $y, $x + $xadd, $y + $yadd, $textcolor);
             ImageLine($im, $x + 1, $y, $x + $xadd + 1, $y + $yadd, $textcolor);
         }

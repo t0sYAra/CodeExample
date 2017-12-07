@@ -1,4 +1,4 @@
-<?
+<?php
 namespace AntonPavlov\PersonalSite\Base;
 
 use AntonPavlov\PersonalSite\Models\MailModel;

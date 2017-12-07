@@ -1,4 +1,4 @@
-<?
+<?php
 namespace AntonPavlov\PersonalSite\Base;
 
 use AntonPavlov\PersonalSite\Exceptions\Page403Exception;
@@ -81,7 +81,7 @@ class Route
         list($controller, $action) = Route::applyRules($rules);
         
         // подключаем файл контроллера
-        $controllerFile = '../controllers/'.$controller.'.php';
+        $controllerFile = '../Controllers/'.$controller.'.php';
 		if(!file_exists($controllerFile)) {
             throw new Page404Exception();
         }
