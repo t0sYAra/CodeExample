@@ -11,19 +11,20 @@ class SearchController extends Controller
 	{
         // получаем теги из всех записей
         $tags = new SearchModel();
-        $tagsArr = $tags->get();
-        
-        for ($i=0; $i<count($tagsArr); $i++) {
-            $tagsArr[$i][0]=preg_replace("/(?:.*?)tgg111#(.*?)tgg999(?:.*)/smiu","$1",$tagsArr[$i][0]);
-            $tempArr=explode(', #',$tagsArr[$i][0]);
-            for ($j=0; $j<count($tempArr); $j++) {
-                $clearedTagsArr[]=$tempArr[$j];
+        try {
+            $tagsArr = $tags->get();
+            
+            for ($i=0; $i<count($tagsArr); $i++) {
+                $tagsArr[$i][0]=preg_replace("/(?:.*?)tgg111#(.*?)tgg999(?:.*)/smiu","$1",$tagsArr[$i][0]);
+                $tempArr=explode(', #',$tagsArr[$i][0]);
+                for ($j=0; $j<count($tempArr); $j++) {
+                    $clearedTagsArr[]=$tempArr[$j];
+                }
+                unset($tempArr);
             }
-            unset($tempArr);
-        }
         
-        // формируем ассоциативный массив "тег" => "сколько таких тегов"
-        if ((isset($clearedTagsArr))&&(count($clearedTagsArr)>0)) {
+            // формируем ассоциативный массив "тег" => "сколько таких тегов"
+            if ((isset($clearedTagsArr))&&(count($clearedTagsArr)>0)) {
                 // сортируем теги по алфавиту
             	sort($clearedTagsArr);
                 
@@ -48,8 +49,12 @@ class SearchController extends Controller
                         'fontSize' => $fontSize
                     ];
                 }
+            }
+            
+        } catch (\Exception $e) {
+            // ошибка во время запроса к БД, ничего не делаем
         }
-        
+
 		$this->view->includeViewFile
         (
             'search.php', // файл с контентом

@@ -1,8 +1,18 @@
 <?
 namespace AntonPavlov\PersonalSite\Base;
 
+use AntonPavlov\PersonalSite\Base\Registry;
+
 trait Formatter
 {
+    private static $pathStart;
+    
+    private function getPathStart()
+    {
+        $reg = Registry::init();
+        return $reg->get('pathStart');
+    }
+
     function getMonthInRussian($month)
     {
         $monthText = $month;
@@ -126,7 +136,7 @@ trait Formatter
         return $temptext;
     }
         
-	function convertPlainTagsToHtmlTags($pclass,$text,$entryid,$dir)
+	function convertPlainTagsToHtmlTags($pclass,$text,$entryid)
 	{
 		// подчищаем текст, удаляем возможные html-теги и т.п.
 		$text=trim(strip_tags($text));
@@ -141,7 +151,7 @@ trait Formatter
 		function($matches) {
         return "<a href=\"blog/tags=".rawurlencode(mb_strtolower($matches[1]))."\" class=\"tags\">#".$matches[1]."</a>".$matches[2];
 		},$text);
-		$text=preg_replace("/(\<a href=\")(blog\/tags=)/smiu","$1".$dir."$2",$text);
+		$text=preg_replace("/(\<a href=\")(blog\/tags=)/smiu","$1".Formatter::getPathStart()."$2",$text);
 		
 		// youtube
 		//$text=preg_replace("/(?:\<br\>\r\n|\<p class=\"$pclass\"\>)vid111(?:www\.)?youtube\.com\/(?:v\/)?(?:watch\?v=)?([-_a-z0-9]{1,11})vid999(?:\<\/p\>|\<br\>)[\r\n]{0,10}/smiu","</p>\r\n<div class=\"youtubevideo1\"><iframe id=\"ytplayer\" type=\"text/html\" class=\"ytplayer\" src=\"https://www.youtube.com/embed/$1\" frameborder=\"0\" allowfullscreen></iframe></div>\r\n<p class=\"$pclass\">",$text);
@@ -149,7 +159,7 @@ trait Formatter
 		
 		// картинки
 		$text=preg_replace("/\<br\>[\r\n]{0,10}((?:pic111(?:[1-9][0-9]{0,5}\.(?:jpg|gif|png))pic999)+)\<\/p\>/smiu","</p>\r\n$1",$text);
-		$text=preg_replace("/pic111([1-9][0-9]{0,5}\.(?:jpg|gif|png))pic999/smiu","<div class=\"pic02\"><img src=\"".$dir."pics/0/$entryid/$1\" class=\"pictext\"></div>",$text);
+		$text=preg_replace("/pic111([1-9][0-9]{0,5}\.(?:jpg|gif|png))pic999/smiu","<div class=\"pic02\"><img src=\"".Formatter::getPathStart()."pics/0/$entryid/$1\" class=\"pictext\"></div>",$text);
 		$text=preg_replace("/((?:\<div class=\"pic02\"\>\<img src=\"(\.\.\/){0,10}pics\/0\/[1-9][0-9]{0,10}\/[1-9][0-9]{0,5}\.(?:jpg|gif|png)\"\ class=\"pictext\">\<\/div\>)+)/smiu","<div class=\"pic01\">$1</div>",$text);
 		
 		// ссылки mailto
@@ -159,7 +169,7 @@ trait Formatter
 		$text=preg_replace("/lnk111(.*?)lnk222(.*?)lnk333/smiu","<a href=\"http://$1\" target=_blank class=\"textlink\">$2</a>",$text);
 		
 		// ссылки внутренние
-		$text=preg_replace("/lnk444(.*?)lnk555(.*?)lnk666/smiu","<a href=\"".$dir."$1\" class=\"textlink\">$2</a>",$text);
+		$text=preg_replace("/lnk444(.*?)lnk555(.*?)lnk666/smiu","<a href=\"".Formatter::getPathStart()."$1\" class=\"textlink\">$2</a>",$text);
 		
 		// ссылки на место на странице
 		$text=preg_replace("/lnk777(.*?)lnk888(.*?)lnk999/smiu","<a href=\"$1\" class=\"textlink\">$2</a>",$text);
@@ -186,39 +196,66 @@ trait Formatter
 		$text=preg_replace("/stk111(.*?)stk999/smiu","<strike>$1</strike>",$text);
 		
 		// подкаст
-		$text=preg_replace("/[\s\t]{0,10}aud111(.*?)aud222(.*?)aud333\.?(\<\/p\>)?/smiu","</p>\r\n<div class=\"audio\"><audio controls><source src=\"".$dir."audio/$entryid/$1\" type=\"audio/mp3\">Воспроизведение аудио не поддерживается вашим браузером.<br><a href=\"".$dir."audio/$entryid/$1\" target=_blank class=\"textlink\">Скачайте запись</a>.</audio></div>",$text);
+		$text=preg_replace("/[\s\t]{0,10}aud111(.*?)aud222(.*?)aud333\.?(\<\/p\>)?/smiu","</p>\r\n<div class=\"audio\"><audio controls><source src=\"".Formatter::getPathStart()."audio/$entryid/$1\" type=\"audio/mp3\">Воспроизведение аудио не поддерживается вашим браузером.<br><a href=\"".Formatter::getPathStart()."audio/$entryid/$1\" target=_blank class=\"textlink\">Скачайте запись</a>.</audio></div>",$text);
 		
 		return $text;
 	}
 	
-    function getNavField($params, $begin, $end, $kolstrok, $kolstroktek, $diff, $pathStart)
+    function getNavField($params, $begin, $end, $kolstrok, $kolstroktek, $diff)
     {
         $navfield = '';
         // разбираемся с полем перехода на другие страницы
         $nazadfield='';
         $daleefield='';
         $link='blog';
-        if ($params['year']!='') {$link.='/'.rawurlencode($params['year']);}
-        if ($params['tags']!='') {$link.='/tags='.rawurlencode($params['tags']);}
-        if ($params['sort']!='') {$link.='/'.rawurlencode($params['sort']);}
-        if ($params['search']!='') {$link.='/search='.rawurlencode($params['search']);}
+        if ($params['year']!='') {$link.='/'.$params['year'];}
+        if ($params['tags']!='') {$link.='/tags='.$params['tags'];}
+        if ($params['sort']!='') {$link.='/'.$params['sort'];}
+        if ($params['search']!='') {$link.='/search='.$params['search'];}
         
         if ($begin>1)
         {
             $newbegin=$begin-$diff;
             if ($newbegin<=0) {$newbegin=1;}
             $newend=$begin-1;
-            $nazadfield='<a href="'.$pathStart.$link.'/'.$newbegin.'-'.$newend.'/" class="link1">Назад</a>';
+            $nazadfield='<a href="'.Formatter::getPathStart().$link.'/'.$newbegin.'-'.$newend.'/" class="link1">Назад</a>';
         }
         if ($kolstrok-($begin-1)>$kolstroktek)
         {
             $newbegin=$end+1;
             $newend=$newbegin+$diff-1;
             if ($kolstrok<$newend) {$newend=$kolstrok;}
-            $daleefield='<a href="'.$pathStart.$link.'/'.$newbegin.'-'.$newend.'/" class="link1">Далее</a>';
+            $daleefield='<a href="'.Formatter::getPathStart().$link.'/'.$newbegin.'-'.$newend.'/" class="link1">Далее</a>';
         }
         $navfield = '<div class="navfield1">'.$nazadfield.'</div><div class="navfield2">'.$daleefield.'</div>';
         
         return $navfield;
     }
+        
+	function defineWordEnding($kol,$word)
+	{
+	if ($word=='знак') {
+		$temp='знаков';
+		if ((mb_substr($kol,mb_strlen($kol)-1,1)=='1')&&(($kol<11)||($kol>19))) {
+            $temp='знак';
+        }
+		if (((mb_substr($kol,mb_strlen($kol)-1,1)=='2')||(mb_substr($kol,mb_strlen($kol)-1,1)=='3')||(mb_substr($kol,mb_strlen($kol)-1,1)=='4'))&&(($kol<11)||($kol>19))) {
+            $temp='знака';
+        }
+        return $temp;
+	}
+	if ($word=='комментарий') {
+		$temp='комментариев';
+		if ((mb_substr($kol,mb_strlen($kol)-1,1)=='1')&&(($kol<11)||($kol>19))) {
+            $temp='комментарий';
+        }
+		if (((mb_substr($kol,mb_strlen($kol)-1,1)=='2')||(mb_substr($kol,mb_strlen($kol)-1,1)=='3')||(mb_substr($kol,mb_strlen($kol)-1,1)=='4'))&&(($kol<11)||($kol>19))) {
+            $temp='комментария';
+        }
+        return $temp;
+	}
+	
+	return '';
+	}
+
 }

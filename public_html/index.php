@@ -2,6 +2,9 @@
 namespace AntonPavlov\PersonalSite;
 
 use AntonPavlov\PersonalSite\Base\Route;
+use AntonPavlov\PersonalSite\Controllers\ErrorController;
+use AntonPavlov\PersonalSite\Exceptions\Page403Exception;
+use AntonPavlov\PersonalSite\Exceptions\Page404Exception;
 
 function autoLoader($name)
 {
@@ -12,5 +15,16 @@ function autoLoader($name)
 spl_autoload_extensions('.php');
 spl_autoload_register('AntonPavlov\PersonalSite\autoLoader');
 
-Route::validateRequest();
-Route::start();
+try {
+    Route::validateRequest();
+} catch (Page403Exception $e) {
+    ErrorController::showPage403();
+}
+
+try {
+    Route::start();
+} catch (Page404Exception $e) {
+    ErrorController::showPage404();
+}
+
+

@@ -1,17 +1,15 @@
 
-function definecommentsvalues(parentcommentsid,levelid,author)
+function defineCommentsValues(parentcommentsid,author)
 {
 //alert(parentcommentsid);
-document.getElementById('parentcommentsid').value=parentcommentsid;
-document.getElementById('levelid').value=levelid;
+document.getElementById('parentCommentsId').value=parentcommentsid;
 document.getElementById('otvet').innerHTML='<p class="abzac1">Вы собираетесь ответить на комментарий пользователя '+author+' (<a href="#postcomment" class="commentanswer" onClick="clearcommentsvalues();">отменить</a>)</p>';
 }
 
 function clearcommentsvalues()
 {
 document.getElementById('otvet').innerHTML='';
-document.getElementById('parentcommentsid').value=0;
-document.getElementById('levelid').value=0;
+document.getElementById('parentCommentsId').value=0;
 }
 
 function showpic(entryid,picid,type)

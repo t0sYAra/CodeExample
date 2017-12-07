@@ -1,7 +1,6 @@
 <?php
 namespace AntonPavlov\PersonalSite\Controllers;
 
-use AntonPavlov\PersonalSite\Base\Registry;
 use AntonPavlov\PersonalSite\Base\Controller;
 
 class IndexController extends Controller

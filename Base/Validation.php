@@ -1,6 +1,8 @@
 <?
 namespace AntonPavlov\PersonalSite\Base;
 
+use AntonPavlov\PersonalSite\Base\Formatter;
+
 trait Validation
 {
     function validate($valueArr)
@@ -17,7 +19,7 @@ trait Validation
             $howMuch = 0;
             $howMuch = preg_replace("/^(.*)min:([1-9][0-9]{0,10})(.*)$/siu","$2",$valueArr['rules']);
             if (mb_strlen($valueArr['value'])<$howMuch) {
-                $error[] = 'Минимальная длина поля "'.$valueArr['name'].'": '.$howMuch.' '.self::defineWordEnding($howMuch,'знак');
+                $error[] = 'Минимальная длина поля "'.$valueArr['name'].'": '.$howMuch.' '.Formatter::defineWordEnding($howMuch,'знак');
             }
         }
         
@@ -26,7 +28,7 @@ trait Validation
             $howMuch = 0;
             $howMuch = preg_replace("/^(.*)max:([1-9][0-9]{0,10})(.*)$/siu","$2",$valueArr['rules']);
             if (mb_strlen($valueArr['value'])>$howMuch) {
-                $error[] = 'Максимальная длина поля "'.$valueArr['name'].'": '.$howMuch.' '.self::defineWordEnding($howMuch,'знак');
+                $error[] = 'Максимальная длина поля "'.$valueArr['name'].'": '.$howMuch.' '.Formatter::defineWordEnding($howMuch,'знак');
             }
         }
        
@@ -105,32 +107,6 @@ trait Validation
 		$text=preg_replace("/([!;]+)([^ ]+)/smi","$1 $2",$text);
 		$text=preg_replace("/(?:\r\n)(?:\r\n)(?:\r\n)+/smi","\r\n\r\n",$text);
 		return $text;
-	}
-    
-	function defineWordEnding($kol,$word)
-	{
-	if ($word=='знак') {
-		$temp='знаков';
-		if ((mb_substr($kol,mb_strlen($kol)-1,1)=='1')&&(($kol<11)||($kol>19))) {
-            $temp='знак';
-        }
-		if (((mb_substr($kol,mb_strlen($kol)-1,1)=='2')||(mb_substr($kol,mb_strlen($kol)-1,1)=='3')||(mb_substr($kol,mb_strlen($kol)-1,1)=='4'))&&(($kol<11)||($kol>19))) {
-            $temp='знака';
-        }
-        return $temp;
-	}
-	if ($word=='комментарий') {
-		$temp='комментариев';
-		if ((mb_substr($kol,mb_strlen($kol)-1,1)=='1')&&(($kol<11)||($kol>19))) {
-            $temp='комментарий';
-        }
-		if (((mb_substr($kol,mb_strlen($kol)-1,1)=='2')||(mb_substr($kol,mb_strlen($kol)-1,1)=='3')||(mb_substr($kol,mb_strlen($kol)-1,1)=='4'))&&(($kol<11)||($kol>19))) {
-            $temp='комментария';
-        }
-        return $temp;
-	}
-	
-	return '';
 	}
 
 }

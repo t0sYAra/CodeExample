@@ -53,9 +53,9 @@ class RouteRules
             ],
             [
                 'regExp' => '\/captcha\/?',
-                'controller' => '',
-                'action' => '',
-                'include' => __DIR__.'/../captcha.php'
+                'controller' => 'CaptchaController',
+                'action' => 'generateCaptcha',
+                'include' => ''
             ]
         ];
         return self::$rules;

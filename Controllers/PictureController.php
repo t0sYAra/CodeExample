@@ -1,7 +1,7 @@
 <?php
 namespace AntonPavlov\PersonalSite\Controllers;
 
-use AntonPavlov\PersonalSite\Base\Route;
+use AntonPavlov\PersonalSite\Controllers\ErrorController;
 use AntonPavlov\PersonalSite\Base\Controller;
 use AntonPavlov\PersonalSite\Models\PictureModel;
 use AntonPavlov\PersonalSite\Models\EntryModel;
@@ -11,6 +11,7 @@ class PictureController extends Controller
     
 	function showPic()
 	{
+        
         $entryId = 0;
         $picId = 0;
         $entryId = preg_replace("/^\/pics\/[01abcd]\/([1-9][0-9]{0,10})\/([1-9][0-9]{0,10}).(jpg|gif|png)\/?$/siu","$1",$_SERVER['REQUEST_URI']);
@@ -18,22 +19,22 @@ class PictureController extends Controller
         $pictureSize = preg_replace("/^\/pics\/([01abcd])\/([1-9][0-9]{0,10})\/([1-9][0-9]{0,10}).(jpg|gif|png)\/?$/siu","$1",$_SERVER['REQUEST_URI']);
 
         $pic = new PictureModel();
-        $picture = $pic->get($entryId, $picId);
-
-        if (!$picture) {
-            // не найдена запись о картинке или ошибка во время запроса к БД
-            Route::showPage404();
+        try {
+            $picture = $pic->get($entryId, $picId);
+        } catch (\Exception $e) {
+            // ошибка во время запроса к БД
+            ErrorController::showPage404();
         }
-        
+
         // получаем транслитерированные данные из БД
         $entr = new EntryModel();
-        $entry = $entr->getTranslit($entryId);
-        
-        if (!$entry) {
-            // не найдена запись или ошибка во время запроса к БД
-            Route::showPage404();
+        try {
+            $entry = $entr->getTranslit($entryId);
+        } catch (\Exception $e) {
+            // ошибка во время запроса к БД
+            ErrorController::showPage404();
         }
-        
+
         if ($pictureSize == 1) {
             $path = __DIR__.'/../pics/'.sprintf("%05d",$entryId).'-'.substr($entry['translit'],0,50).'/';
         } else {
@@ -48,7 +49,7 @@ class PictureController extends Controller
             return false;
         }
         
-        Route::showPage404();
+        ErrorController::showPage404();
 	}
 
 	

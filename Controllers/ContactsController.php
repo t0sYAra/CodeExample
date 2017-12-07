@@ -7,9 +7,8 @@ use AntonPavlov\PersonalSite\Base\MailSender;
 
 class ContactsController extends Controller
 {
-
-	function indexAction()
-	{	
+    private function getDefaultFormValues()
+    {
         $defaultFormValues = [
             'name' => [
                 'name' => 'имя',
@@ -48,7 +47,13 @@ class ContactsController extends Controller
                 'regExpMessage' => 'может состоять только из 5 цифр'
             ]
         ];
+        return $defaultFormValues;
+    }
 
+	function indexAction()
+	{	
+        $defaultFormValues = $this->getDefaultFormValues();
+        $formValues = $defaultFormValues;
 
         // принимаем данные из формы, если они были посланы
         $status = '';
@@ -72,27 +77,25 @@ class ContactsController extends Controller
             
             // подгатавливаем текст письма
             $mailText = $formValues['name']['value'].' ('.$formValues['email']['value'].') оставил(а) Вам сообщение:'.PHP_EOL.PHP_EOL.$formValues['text']['value'];
-            
-            // ставим письмо в очередь
-            $mailresult = MailSender::putMailToQueue
-            (
-                'mail@antonpavlov.ru',
-                'Новое сообщение с сайта AntonPavlov.ru',
-                $mailText
-            );
-            
-            if ($mailresult) {
+
+            try {
+                // ставим письмо в очередь
+                $mailresult = MailSender::putMailToQueue
+                    (
+                        'mail@antonpavlov.ru',
+                        'Новое сообщение с сайта AntonPavlov.ru',
+                        $mailText
+                    );
+                
                 // обнуляем исходные данные
                 $formValues = $defaultFormValues;
                 $status = 'Сообщение отправлено. Спасибо';
-            }
-            else {
+            } catch (\Exception $e) {
+                // не удалось отправить письмо
                 $errors = 'Произошла техническая ошибка. Попробуйте отправить сообщение позже';
             }
             
         }
-        
-    
     
 		$this->view->includeViewFile
         (

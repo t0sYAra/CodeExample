@@ -11,9 +11,8 @@ class View
 			extract($data);
 		}
         
-        $pathStart = $this->pathToResources();
         $reg = Registry::init();
-        $reg->set('pathStart',$pathStart);
+        $pathStart = $reg->get('pathStart');
         
         $page = $_SERVER['REQUEST_URI']; // адрес страницы
         
@@ -38,25 +37,5 @@ class View
         // подключаем файл шаблона (а он уже внутри себя подключит контент и т.п.)
 		include_once __DIR__.'/../views/'.$templateViewFile;
 	}
-    
-    /*
-    * метод pathToResources вычисляет корректный относительный путь к css, js, img и прочим ресурсам
-    */
-    
-    public function pathToResources()
-    {
-        $pathStart = '';
-        
-        // удаляем концевые пробелы и слеши
-        $path = trim($_SERVER['REQUEST_URI']," \t\n\r\0\x0B\\\/");
-        
-        // считаем уровень вложенности и соответственно добавляем в путь "../"
-        $backs = count(explode('/',$path));
-        for ($i = 0; $i < $backs; $i++) {
-            $pathStart .= '../';
-        }
 
-        return $pathStart;
-    }
-    
 }

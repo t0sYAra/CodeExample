@@ -1,6 +1,9 @@
 <?
 namespace AntonPavlov\PersonalSite\Base;
 
+use AntonPavlov\PersonalSite\Exceptions\Page403Exception;
+use AntonPavlov\PersonalSite\Exceptions\Page404Exception;
+
 class Route
 {
     public static function validateRequest()
@@ -12,7 +15,7 @@ class Route
         
         // выкидываем пользователя, если нам что-то не понравилось
         if (!$requestOK) {
-            Route::showPage403();
+            throw new Page403Exception();
         }
     }
         
@@ -57,7 +60,7 @@ class Route
         }
         
         if ($error !== '200') {
-            Route::showPage404();
+            throw new Page404Exception();
         }
 
         $arr[]=$controller;
@@ -78,7 +81,7 @@ class Route
         // подключаем файл контроллера
         $controllerFile = '../controllers/'.$controller.'.php';
 		if(!file_exists($controllerFile)) {
-            Route::showPage404();
+            throw new Page404Exception();
         }
         
 		// создаем экземпляр класса контроллера
@@ -86,33 +89,13 @@ class Route
 		$controllerObj = new $controller;
 
 		if(method_exists($controllerObj, $action)) {
-
-            // инициализируем реестр
-            $reg = Registry::init();
-            //$reg->set('surname','pavlov');
-            
 			// вызываем метод контроллера
 			$controllerObj->$action();
 		}
 		else {
-			Route::showPage404();
+			throw new Page404Exception();
 		}
         
     }
-    
-    public static function showPage403()
-    {
-        header('HTTP/1.1 403 Frobidden');
-		header('Status: 403 Frobidden');
-        die;
-    }
-    
-       
-    public static function showPage404()
-    {
-        header('HTTP/1.1 404 Not Found');
-		header('Status: 404 Not Found');
-        die;
-    }
-    
+
 }
