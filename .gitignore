@@ -5,3 +5,5 @@
 /documentation/*
 /composer.json
 /cmd.bat
+/composer.lock
+/phpdoc.dist.xml
