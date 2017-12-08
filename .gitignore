@@ -1,3 +1,7 @@
 /ConfigDB.php
 /pics/*
 /audio/*
+/vendor/*
+/documentation/*
+/composer.json
+/cmd.bat

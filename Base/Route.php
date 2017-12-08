@@ -4,8 +4,28 @@ namespace AntonPavlov\PersonalSite\Base;
 use AntonPavlov\PersonalSite\Exceptions\Page403Exception;
 use AntonPavlov\PersonalSite\Exceptions\Page404Exception;
 
+/**
+ * Класс маршрутизатора
+ *
+ * Проверяет валидность запроса,
+ * анализирует правила маршрутизации.
+ * Назначает контроллер, если найдено соответствующее ему правило
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class Route
 {
+    /**
+     * Метод проверяет строку запроса
+     *
+     * Если запрос содержит запрещённые шаблоны,
+     * то выдаётся страница 403: forbidden
+     *
+     * @return void
+     */
     public static function validateRequest()
     {
         $forbiddenRules = RouteRules::forbiddenRules();
@@ -20,7 +40,16 @@ class Route
         }
 
     }
-        
+
+    /**
+     * Метод применяет правила редиректа
+     *
+     * Если запрос содержит шаблон редиректа,
+     * то происходит редирект 301 на указанную в правилах страницу
+     *
+     * @param array $redirectRules массив с правилами редиректа
+     * @return void
+     */
     private static function applyRedirectRules($redirectRules)
     {
         // получаем строку запроса
@@ -36,12 +65,20 @@ class Route
 
     }
     
+    /**
+     * Метод применяет правила маршрутизации
+     *
+     * Если запрос содержит шаблон маршрутизации,
+     * то вызывается контроллер и его метод, ответственный за обработку запроса
+     *
+     * @param array $rules массив с правилами маршрутизации
+     * @return array
+     */
     private static function applyRules($rules)
     {
         // по умолчанию
         $error = '404';
         $controller = '';
-        $model = '';
 		$action = '';
 
         // получаем строку запроса
@@ -71,6 +108,18 @@ class Route
         return $arr;
     }
     
+    /**
+     * Метод проверяет правила редиректа и маршрутизации
+     *
+     * Метод проверяет правила редиректа и маршрутизации и
+     * либо перенаправляет на другую страницу,
+     * либо вызывает метод нужного контроллера для обработки запроса,
+     * либо выбрасывает исключение 404: not found
+     *
+     * @throws Page404Exception если найденой пары класс контроллера -> метод не существует
+     *
+     * @return void
+     */
     public static function start()
     {
         $rules = RouteRules::getRules();

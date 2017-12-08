@@ -10,8 +10,28 @@ use AntonPavlov\PersonalSite\Base\MailSender;
 use AntonPavlov\PersonalSite\Exceptions\Page404Exception;
 use AntonPavlov\PersonalSite\Exceptions\CommentNotFoundException;
 
+/**
+ * Контроллер, обрабатывающий запрос на загрузку одной записи и комментариев к ней
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class EntryController extends Controller
 {
+
+    /**
+     * Возвращает конфигурационный массив
+     *
+     * Возвращает конфигурационный массив для каждого поля формы (нужен, если со страницы отправлен POST-запрос).
+     * В массиве содержатся значения полей формы по умолчанию, правила валидации данных и сообщения об ошибках.
+     * Для правил ($defaultFormValues[$n]['rules']) возможны следующие варианты: required, min:_, max:_, nohtml (указываются через запятую)
+     * Также можно задать RegExp шаблон ($defaultFormValues[$n]['regExp']) для проверки на совпадение ($defaultFormValues[$n]['regExpContains'] = 1)
+     * или несовпадение ($defaultFormValues[$n]['regExpContains'] = 0)
+     *
+     * @return array
+     */
     private function getDefaultFormValues()
     {
         $defaultFormValues = [
@@ -55,6 +75,15 @@ class EntryController extends Controller
         return $defaultFormValues;
     }
 
+    /**
+     * Выводит на экран запись и комментарии к ней
+     *
+     * Выводит на экран запись и комментарии к ней.
+     * Обрабатывает данные, отправленные из формы добавления комментария.
+     * Если пройдена валидация - сохраняет комментарий в БД и отправляет письмо с сообщением о новом комментарии.
+     *
+     * @return void
+     */
 	public function showEntry()
 	{
         // значения по умолчанию
@@ -68,8 +97,8 @@ class EntryController extends Controller
         }
         
         // получаем теги из всех записей
-        $entry = new EntryModel();
         try {
+            $entry = new EntryModel();
             $entryArr = $entry->getMain($nameTranslitted);
         } catch (Page404Exception $e) {
             (new ErrorController())->showPage404();
@@ -208,6 +237,23 @@ class EntryController extends Controller
         );
 	}
 
+    /**
+     * Рекурсивно получает дерево комментариев
+     *
+     * Рекурсивно получает дерево комментариев. Возвращает массив, где его элементы:
+     * [0] - счётчик обработанных комментариев,
+     * [1] - сериализованная строка с уже полученными из БД комментариями
+     *
+     * @param resource $db ресурс для подключения к БД
+     * @param int $parentCommentsId id родительского комментария
+     * @param int $parentEntryId id родительской записи
+     * @param string $serialized упакованные в строку массивы параметров каждого комментария (автор, текст и т.п.)
+     * @param int $ammount счётчик обработанных комментариев
+     *
+     * @throws \Exception если не удалось получить данные из БД
+     *
+     * @return array
+     */
 	function getCommentsTree($db, $parentCommentsId, $parentEntryId, $serialized, $ammount)
 	{
         // получаем комментарии текущего уровня вложенности
@@ -259,6 +305,18 @@ class EntryController extends Controller
         return $arr;
 	}
 
+    /**
+     * Генерирует js-массив с данными обо всех картинках в записи
+     *
+     * Генерирует js-массив с данными обо всех картинках в записи,
+     * а также другие переменные, необходимые для а) отображения крупных картинок
+     * при щелчке по картинке в записи; б) навигации между крупными картинками
+     *
+     * @param int $entryId id родительской записи
+     * @param string $text текст записи
+     *
+     * @return string
+     */
     function preparePictureArrForJS($entryId,$text)
     {
         // загружаем данные о всех картинках в массив
@@ -280,7 +338,18 @@ class EntryController extends Controller
         
         return $additionalJStext;
     }
-    
+
+    /**
+     * Обрабатывает заголовок, эпиграф и текст записи
+     *
+     * Обрабатывает заголовок, эпиграф и текст записи.
+     * Чистит лишние переводы строк, обрамляет эпиграф div'ами,
+     * конвертирует теги в тексте из внутренних в html-теги
+     *
+     * @param array $entryArr массив с данными записи - заголовком, эпиграфом, текстом и т.п.
+     *
+     * @return array
+     */
     function cleanEntryParts($entryArr)
     {
         $entryArr['zag']=trim(strip_tags($entryArr['zag']));

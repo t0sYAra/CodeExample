@@ -6,9 +6,22 @@ use AntonPavlov\PersonalSite\Base\Controller;
 use AntonPavlov\PersonalSite\Models\PictureModel;
 use AntonPavlov\PersonalSite\Models\EntryModel;
 
+/**
+ * Контроллер, обрабатывающий запрос на загрузку картинки
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class PictureController extends Controller
 {
-    
+  
+    /**
+     * Загружает картинку
+     *
+     * @return void
+     */  
 	function showPic()
 	{
         
@@ -18,8 +31,8 @@ class PictureController extends Controller
         $picId = preg_replace("/^\/pics\/[01abcd]\/([1-9][0-9]{0,10})\/([1-9][0-9]{0,10}).(jpg|gif|png)\/?$/siu","$2",$_SERVER['REQUEST_URI']);
         $pictureSize = preg_replace("/^\/pics\/([01abcd])\/([1-9][0-9]{0,10})\/([1-9][0-9]{0,10}).(jpg|gif|png)\/?$/siu","$1",$_SERVER['REQUEST_URI']);
 
-        $pic = new PictureModel();
         try {
+            $pic = new PictureModel();
             $picture = $pic->get($entryId, $picId);
         } catch (\Exception $e) {
             // ошибка во время запроса к БД
@@ -27,8 +40,8 @@ class PictureController extends Controller
         }
 
         // получаем транслитерированные данные из БД
-        $entr = new EntryModel();
         try {
+            $entr = new EntryModel();
             $entry = $entr->getTranslit($entryId);
         } catch (\Exception $e) {
             // ошибка во время запроса к БД

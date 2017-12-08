@@ -5,9 +5,29 @@ use AntonPavlov\PersonalSite\Base\Model;
 use AntonPavlov\PersonalSite\Exceptions\Page404Exception;
 use AntonPavlov\PersonalSite\Exceptions\CommentNotFoundException;
 
+/**
+ * Модель для работы с единичной записью и комментариями к ней
+ *
+ * Получает записи из блога, соответствующие им id картинок и количество комментариев
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class EntryModel extends Model
 {
 
+    /**
+     * Возвращает массив с параметрами записи(заголовок, текст и т.п.) по транслитерированному заголовку записи
+     *
+     * @param string $nameTranslitted транслитерированный заголовок записи
+     *
+     * @throws \Exception если не удалось получить данные из БД
+     * @throws \Page404Exception если в БД отсутствует искомая запись
+     *
+     * @return array
+     */
     public function getMain($nameTranslitted)
     {
         $query = $this->initDB()->prepare('select `entryid`, `zag`, `translit`, `epigraf`, `text`, `author`, `rating`, `published` from `entries` where `translit`=?&&`ifshow`=1 limit 0,1');
@@ -26,7 +46,16 @@ class EntryModel extends Model
 
         return $resultsArr;
     }
-    
+
+    /**
+     * Возвращает транслитерированный заголовок записи
+     *
+     * @param int $entryId id записи
+     *
+     * @throws \Exception если не удалось получить данные из БД
+     *
+     * @return array
+     */
     public function getTranslit($entryId)
     {
         $query = $this->initDB()->prepare('select `translit` from `entries` where `entryid`=? limit 0,1');
@@ -46,6 +75,16 @@ class EntryModel extends Model
         return $resultsArr;
     }
     
+    /**
+     * Возвращает уровень вложенности исследуемого комментария
+     *
+     * @param int $entryId id родительской записи
+     * @param int $parentCommentsId id исследуемого комментария
+     *
+     * @throws \Exception если не удалось получить данные из БД
+     *
+     * @return array
+     */
     public function getlevelId($entryId, $parentCommentsId)
     {
         $query = $this->initDB()->prepare('select `levelid` from `comments` where `id`=?&&`parententryid`=? limit 0,1');
@@ -65,7 +104,20 @@ class EntryModel extends Model
 
         return $resultsArr;
     }
-       
+    
+    /**
+     * Сохраняет новый комментарий в БД
+     *
+     * @param int $entryId id родительской записи
+     * @param int $parentCommentsId id родительского комментария, при отсутствии - 0
+     * @param int $levelId уровень вложенности нового комментария
+     * @param string $commentsAuthor имя автора комментария
+     * @param string $commentsText текст комментария
+     *
+     * @throws \Exception если не удалось записать комментарий в БД
+     *
+     * @return void
+     */
     public function saveComment($entryId, $parentCommentsId, $levelId, $commentsAuthor, $commentsText)
     {
         $query = $this->initDB()->prepare('INSERT INTO `comments` values (null,?,?,?,?,?,?,?,1)');  
@@ -83,6 +135,17 @@ class EntryModel extends Model
         }
     }
     
+    /**
+     * Получает комментарии из БД
+     *
+     * @param int $parentCommentsId id родительского комментария, при отсутствии - 0
+     * @param int $parentEntryId id родительской записи
+     *
+     * @throws \Exception если не удалось записать комментарий в БД
+     * @throws \CommentNotFoundException если не удалось найти комментарий, соответствующий условиям поиска
+     *
+     * @return array
+     */
     public function getComments($parentCommentsId, $parentEntryId)
     {
         $query = $this->initDB()->prepare('select `id` as `parentCommentsId`, `levelid`, `author`, `text`, `published` from `comments` where `parentcommentsid`=?&&`parententryid`=?&&`ifshow`=1 order by `published` asc');

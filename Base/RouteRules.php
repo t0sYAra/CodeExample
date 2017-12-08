@@ -1,12 +1,39 @@
 <?php
 namespace AntonPavlov\PersonalSite\Base;
 
+/**
+ * Класс правил маршрутизации, редиректа и валидности запросов (конфиг)
+ *
+ * В каждом методе класса конфигурируются правила маршрутизации, редиректа и валидности запросов
+ * путём помещения правил в массивы
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class RouteRules
 {    
+    /**
+     * @var array $rules Ассоциативный массив с правилами маршрутизации
+     */
     private static $rules;
+
+    /**
+     * @var array $redirectRules Ассоциативный массив с правилами редиректа
+     */
     private static $redirectRules;
+
+    /**
+     * @var array $forbiddenRules Список с правилами валидации запроса
+     */
     private static $forbiddenRules;
-    
+
+    /**
+     * Метод возвращает правила маршрутизации
+     *
+     * @return array
+     */
     public static function getRules()
     {
         self::$rules = [
@@ -68,6 +95,11 @@ class RouteRules
         return self::$rules;
     }
 
+    /**
+     * Метод возвращает правила редиректа
+     *
+     * @return array
+     */
     public static function redirectRules()
     {
         self::$redirectRules = [
@@ -594,7 +626,12 @@ class RouteRules
         ];
         return self::$redirectRules;
     }
- 
+
+    /**
+     * Метод возвращает правила валидации запроса
+     *
+     * @return array
+     */
     public static function forbiddenRules()
     {
         self::$forbiddenRules = [

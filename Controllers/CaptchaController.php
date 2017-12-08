@@ -7,9 +7,22 @@ use AntonPavlov\PersonalSite\Models\PictureModel;
 use AntonPavlov\PersonalSite\Models\EntryModel;
 use AntonPavlov\PersonalSite\Base\RandomHelper;
 
+/**
+ * Контроллер, обрабатывающий запрос на загрузку капчи
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class CaptchaController extends Controller
 {
     
+    /**
+     * Генерирует случайную картинку с капчой
+     *
+     * @return void
+     */
     function generateCaptcha()
     {
         if (isset($_SESSION['icndhcak'])) {

@@ -1,12 +1,40 @@
 <?php
 namespace AntonPavlov\PersonalSite\Base;
 
+/**
+ * Класс-предок для всех контроллеров
+ *
+ * Класс-предок для всех котроллеров. Во время создания экземпляра класса стартует сессии,
+ * очищает данные от слешей во входных данных глобальных массивов $_SERVER (и т.п.),
+ * инициализирует реестр для хранения данных,
+ * определяет путь к ресурсам типа img, css, js и т.п.,
+ * создаёт объект класса View
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class Controller
 {
-	protected $model;
+    /**
+     * @var object $view экземпляр класса View
+     */
 	protected $view;
+    
+    /**
+     * @var string $pathStart путь к ресурсам типа img, css, js и т.п.
+     */
     private $pathStart;
-	
+
+    /**
+     * Конструктор класса
+     *
+     * Стартует сессию, выполняет инициализацию,
+     * создаёт экземпляр класса View
+     *
+     * @return void
+     */
 	function __construct()
 	{
         session_start();
@@ -14,6 +42,15 @@ class Controller
         $this->view = new View();
 	}
 
+    /**
+     * Чистит слеши
+     *
+     * Рекурсивно чистит слеши у значений глобальных массивов
+     *
+     * @param mixed $el переменная или массив, которую нужно очистить
+     *
+     * @return void
+     */
     private function initialInputCleaning(&$el)
     {
         if (is_array($el)) {
@@ -25,6 +62,14 @@ class Controller
         }
     }
     
+    /**
+     * Выполняет инициализацию
+     *
+     * Выполняет инициализацию: чистит слеши, включает реестр, определяет путь к ресурсам.
+     * Может быть перезаписан в дочернем классе (например, если не требуется какой-то этап инициализации)
+     *
+     * @return void
+     */
     protected function init()
     {
         // очищаем входные данные
@@ -45,7 +90,14 @@ class Controller
         
         
     }
-    
+        
+    /**
+     * Определяет путь к ресурсам
+     *
+     * Определяет путь к ресурсам типа img, css, js и т.п. исходя из строки запроса
+     *
+     * @return string
+     */
     public function pathToResources()
     {
         $pathStart = '';

@@ -7,9 +7,22 @@ use AntonPavlov\PersonalSite\Models\BlogModel;
 use AntonPavlov\PersonalSite\Base\Formatter;
 use AntonPavlov\PersonalSite\Exceptions\SearchStringNotFoundException;
 
+/**
+ * Контроллер, обрабатывающий запрос на загрузку множества записей в блоге
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class BlogController extends Controller
 {
-    
+
+    /**
+     * Выводит несколько записей из блога
+     *
+     * @return void
+     */
 	function showBlog()
 	{
         // значения по умолчанию
@@ -44,8 +57,9 @@ class BlogController extends Controller
         // получаем записи
         $errors = '';
         $errorType = 0;
-        $blog = new BlogModel();
+        
         try {
+            $blog = new BlogModel();
             $allEntries = $blog->getMain($begin,$end,$params);
             
             // форматируем текст
@@ -75,7 +89,7 @@ class BlogController extends Controller
                 $allEntries[$i]['commentsAmmount'] = '';
                 try {
                     $comments = $blog->getCommentsAmmount($allEntries[$i]['entryid']);
-                    if ($allEntries[$i]['commentsAmmount'] > 0) {
+                    if ($comments['commentsAmmount'] > 0) {
                         $allEntries[$i]['commentsAmmount'] = $comments['commentsAmmount'].' '.Formatter::defineWordEnding($comments['commentsAmmount'],'комментарий');
                     }
                 } catch (\Exception $e) {

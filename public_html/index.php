@@ -1,4 +1,15 @@
 <?php
+/**
+ * Мой личный сайт, входная страница
+ *
+ * Скрипт настраивает и включает автозагрузчик классов
+ * проверяет строку запроса
+ * и с помощью маршрутизатора определяет, какой контроллёр будет обрабатывать запрос
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ * @package antonpavlov\personalsite
+ */
 namespace AntonPavlov\PersonalSite;
 
 use AntonPavlov\PersonalSite\Base\Route;
@@ -6,6 +17,15 @@ use AntonPavlov\PersonalSite\Controllers\ErrorController;
 use AntonPavlov\PersonalSite\Exceptions\Page403Exception;
 use AntonPavlov\PersonalSite\Exceptions\Page404Exception;
 
+/**
+ * автозагрузчик классов
+ *
+ * автоматически загружает классы, если встречается 
+ * их имя во время выполнения скрипта
+ *
+ * @param string $name полное имя класса с учётом пространства имён
+ * @return void
+ */
 function autoLoader($name)
 {
     $name = preg_replace('/^AntonPavlov\\\\PersonalSite\\\\(.*)/siu', "$1", $name);

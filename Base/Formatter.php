@@ -3,16 +3,43 @@ namespace AntonPavlov\PersonalSite\Base;
 
 use AntonPavlov\PersonalSite\Base\Registry;
 
+/**
+ * Форматирование текста
+ *
+ * Содержит методы для очистки текста от своих тегов,
+ * получения первых абзацев текста и т.п.
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 trait Formatter
 {
+
+    /**
+     * @var string $pathStart путь к ресурсам типа img, css, js  и т.п.
+     */
     private static $pathStart;
-    
+
+    /**
+     * Выдаёт путь к ресурсам, записанный в данных рестра
+     *
+     * @return string
+     */
     private function getPathStart()
     {
         $reg = Registry::init();
         return $reg->get('pathStart');
     }
 
+    /**
+     * Выдаёт название месяца с маленькой буквы в родительном падеже
+     *
+     * @param string $month номер месяца с ведущим нулём (от 01 до 12)
+     *
+     * @return string
+     */
     function getMonthInRussian($month)
     {
         $monthText = $month;
@@ -30,13 +57,18 @@ trait Formatter
 		"12" => "декабря");
 		$monthText = strtr($month,$correspondence);
 
-	return $monthText;
-
+        return $monthText;
 	}
-
+     
+    /**
+     * Удаляет внутренние теги типа zag, tgg, vid  и т.п., а также множественные переводы строк
+     *
+     * @param string $text текст, подлежащий очистке
+     *
+     * @return string
+     */
 	function clearPlainTags($text)
 	{
-		// подчищаем текст, удаляем возможные html-теги и т.п.
 		$text = trim(strip_tags($text));
 		$text = preg_replace("/(zag|tgg|vid|pic|aud)(111|444|777)(.*?)(zag|tgg|vid|pic|aud)(333|666|999)/smiu", "", $text);
 		$text = preg_replace("/\r\n\r\n(?:\r\n)+/smiu", "\r\n\r\n", $text);
@@ -44,7 +76,16 @@ trait Formatter
 
 		return trim($text);
 	}
-	
+     
+    /**
+     * Удаляет часть текста, у которой есть открывающий тег, но нет закрывающего, обычно - для ссылок
+     *
+     * @param string $patternstart RegExp шаблон начала, обычно - внутренний открывающий тег
+     * @param string $patternend RegExp шаблон конца, обычно - внутренний закрывающий тег
+     * @param string $text текст, подлежащий очистке
+     *
+     * @return string
+     */
 	function clearTails1($patternstart,$patternend,$text)
 	{
 		$kol1=preg_match_all("/$patternstart/",$text);
@@ -55,7 +96,16 @@ trait Formatter
 		}
 		return trim($text);
 	}
-	
+	     
+    /**
+     * Добавляет внутренний закрывающий тег, если его нет, обычно - для тегов iii, hhh, bld и т.п.
+     *
+     * @param string $patternstart RegExp шаблон начала, обычно - внутренний открывающий тег
+     * @param string $patternend RegExp шаблон конца, обычно - внутренний закрывающий тег
+     * @param string $text текст, подлежащий очистке
+     *
+     * @return string
+     */
 	function clearTails2($patternstart,$patternend,$text)
 	{
 		$kol1=preg_match_all("/$patternstart/",$text);
@@ -66,7 +116,14 @@ trait Formatter
 		}
 		return trim($text);
 	}
-	
+		     
+    /**
+     * Корректирует чатси оборванные части текста, содержащие только открывающие теги, удаляет конечные знаки препинания
+     *
+     * @param string $text текст, подлежащий очистке
+     *
+     * @return string
+     */
 	function clearTagsTails($text)
 	{
 		// очищаем части слов
@@ -104,6 +161,16 @@ trait Formatter
 		return $text;
 	}
 
+    /**
+     * Возвращает начальную часть текста, ограниченную указанным количеством символов и абзацев
+     *
+     * @param string $translit транслитерированный заголовок записи в блоге
+     * @param string $text текст, подлежащий очистке
+     * @param int $abzacLimit лимит на количество абзацев
+     * @param int $symbolsLimit лимит на количество символов
+     *
+     * @return string
+     */
     function getFirstParagraphs($translit, $text, $abzacLimit, $symbolsLimit)
     {
         $abzacarr=explode("\r\n\r\n",$text);
@@ -135,7 +202,16 @@ trait Formatter
 
         return $temptext;
     }
-        
+
+    /**
+     * Возвращает текст, в котором внутренние теги замененые на html-теги
+     *
+     * @param string $pclass основной стиль абзаца <p>
+     * @param string $text текст, подлежащий обработке
+     * @param int $entryid id записи в блоге
+     *
+     * @return string
+     */
 	function convertPlainTagsToHtmlTags($pclass,$text,$entryid)
 	{
 		// подчищаем текст, удаляем возможные html-теги и т.п.
@@ -200,7 +276,19 @@ trait Formatter
 		
 		return $text;
 	}
-	
+
+    /**
+     * Возвращает навигационное меню для блога "<-назад | далее->"
+     *
+     * @param array $params массив, содержащие опциональные ограничения на выдачу блога: год, теги, способ сортировки, поисковую строку
+     * @param int $begin номер строки в выдаче БД, с которой начинается выдача записей на текущей странице
+     * @param int $end номер строки в выдаче БД, на которой заканчивается выдача записей на текущей странице
+     * @param int $kolstrok сколько всего записей в блоге есть в БД по данному запросу
+     * @param int $kolstroktek сколько записей из блога выведено на текущую страницу
+     * @param int $diff сколько записей должно выводиться на текущую страницу
+     *
+     * @return string
+     */
     function getNavField($params, $begin, $end, $kolstrok, $kolstroktek, $diff)
     {
         $navfield = '';
@@ -231,7 +319,15 @@ trait Formatter
         
         return $navfield;
     }
-        
+
+    /**
+     * Возвращает слово с окончанием, соответствующим числительному перед словом
+     *
+     * @param int $kol числительное, стоящее перед обрабатываемым словом
+     * @param string $word слово в именительном падеже с маленькой буквы
+     *
+     * @return string
+     */
 	function defineWordEnding($kol,$word)
 	{
 	if ($word=='знак') {

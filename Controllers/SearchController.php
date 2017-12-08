@@ -4,14 +4,28 @@ namespace AntonPavlov\PersonalSite\Controllers;
 use AntonPavlov\PersonalSite\Base\Controller;
 use AntonPavlov\PersonalSite\Models\SearchModel;
 
-
+/**
+ * Контроллер, обрабатывающий запрос на загрузку страницы поиска
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class SearchController extends Controller
 {
+    
+    /**
+     * Выводит страницу поиска с формой поискового запроса и облаком тегов
+     *
+     * @return void
+     */
 	function indexAction()
 	{
+        $finalTagsArr = Array ();
         // получаем теги из всех записей
-        $tags = new SearchModel();
         try {
+            $tags = new SearchModel();
             $tagsArr = $tags->get();
             
             for ($i=0; $i<count($tagsArr); $i++) {

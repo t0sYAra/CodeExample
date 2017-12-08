@@ -5,10 +5,33 @@ use AntonPavlov\PersonalSite\Base\Registry;
 use AntonPavlov\PersonalSite\Base\Model;
 use AntonPavlov\PersonalSite\Exceptions\SearchStringNotFoundException;
 
+/**
+ * Модель для работы с блогом (множеством записей)
+ *
+ * Получает записи из блога, соответствующие им id картинок и количество комментариев
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class BlogModel extends Model
 {
 
-    public function getMain($begin,$end,$params)
+    /**
+     * Возвращает ассоциативный массив записей с параметрами (заголовок, текст и т.п.), удовлетворяющий условиям запроса
+     *
+     * @param int $begin номер строки в выдаче БД, с которой начинается выдача записей на текущей странице
+     * @param int $end номер строки в выдаче БД, на которой заканчивается выдача записей на текущей странице
+     * @param array $params массив, содержащие условия запроса: год, теги, способ сортировки, поисковую строку
+     *
+     * @throws \Exception если не удалось получить данные из БД
+     * @throws \SearchStringNotFoundException если в БД нет записей, соответствующих поисковому запросу - 
+     * нужно для передачи наверх содержания поискового запроса
+     *
+     * @return array
+     */
+    public function getMain($begin, $end, $params)
     {
         // формируем условие запроса
         $uslfield = '';
@@ -103,7 +126,16 @@ class BlogModel extends Model
         
         return $resultsEntriesArr;
     }
-        
+
+    /**
+     * Возвращает массив с данными о id картинки и её типе
+     *
+     * @param int $entryId id записи в блоге
+     *
+     * @throws \Exception если не удалось получить данные из БД
+     *
+     * @return array
+     */
     public function getPicture($entryId)
     {
         $query = $this->initDB()->prepare('select `picid`, `type`, `ifmain` from `pics` where `entryid`=:entryId order by `ifmain` desc, `picid` asc limit 0,1');
@@ -122,7 +154,16 @@ class BlogModel extends Model
         
         return $resultsArr;
     }
-            
+
+    /**
+     * Возвращает количество комментариев к исследуемой записи в блоге
+     *
+     * @param int $entryId id записи в блоге
+     *
+     * @throws \Exception если не удалось получить данные из БД
+     *
+     * @return array
+     */
     public function getCommentsAmmount($entryId)
     {
         $query = $this->initDB()->prepare('select count(`id`) as `commentsAmmount` from `comments` where `parententryid`=:entryId limit 0,1');

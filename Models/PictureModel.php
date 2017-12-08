@@ -3,9 +3,29 @@ namespace AntonPavlov\PersonalSite\Models;
 
 use AntonPavlov\PersonalSite\Base\Model;
 
+/**
+ * Модель для работы с картинками
+ *
+ * Предоставляет данные о картинке
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class PictureModel extends Model
 {
 
+    /**
+     * Возвращает id и тип картинки (png/jpg/gif)
+     *
+     * @param int $entryId id записи, к которой прикреплена картинка
+     * @param int $picId id картинки без ведущих нулей
+     *
+     * @throws \Exception если не удалось получить данные из БД
+     *
+     * @return array
+     */
     public function get($entryId, $picId)
     {
         $query = $this->initDB()->prepare('select `picid`, `type` from `pics` where `entryid`=:entryId&&`picid`=:picId limit 0,1');

@@ -5,8 +5,28 @@ use AntonPavlov\PersonalSite\Base\Controller;
 use AntonPavlov\PersonalSite\Base\Validation;
 use AntonPavlov\PersonalSite\Base\MailSender;
 
+/**
+ * Контроллер, обрабатывающий запрос на загрузку страницы контактов
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class ContactsController extends Controller
 {
+
+    /**
+     * Возвращает конфигурационный массив
+     *
+     * Возвращает конфигурационный массив для каждого поля формы (нужен, если со страницы отправлен POST-запрос).
+     * В массиве содержатся значения полей формы по умолчанию, правила валидации данных и сообщения об ошибках.
+     * Для правил ($defaultFormValues[$n]['rules']) возможны следующие варианты: required, min:_, max:_, nohtml (указываются через запятую)
+     * Также можно задать RegExp шаблон ($defaultFormValues[$n]['regExp']) для проверки на совпадение ($defaultFormValues[$n]['regExpContains'] = 1)
+     * или несовпадение ($defaultFormValues[$n]['regExpContains'] = 0)
+     *
+     * @return array
+     */
     private function getDefaultFormValues()
     {
         $defaultFormValues = [
@@ -50,8 +70,17 @@ class ContactsController extends Controller
         return $defaultFormValues;
     }
 
+    /**
+     * Выводит на экран данные о контактах и форму обратной связи
+     *
+     * Выводит на экран данные о контактах и форму обратной связи.
+     * Обрабатывает данные, отправленные из формы.
+     * Если пройдена валидация - отправляет письмо с сообщением.
+     *
+     * @return void
+     */
 	function indexAction()
-	{	
+	{
         $defaultFormValues = $this->getDefaultFormValues();
         $formValues = $defaultFormValues;
 

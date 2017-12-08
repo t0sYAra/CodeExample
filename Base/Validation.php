@@ -4,9 +4,65 @@ namespace AntonPavlov\PersonalSite\Base;
 use AntonPavlov\PersonalSite\Base\Formatter;
 use AntonPavlov\PersonalSite\Base\RandomHelper;
 
+/**
+ * Валидация даных, присланных из формы
+ *
+ * Получает данные из формы и:
+ * 1. Очищает их от концевых и множественных пробельных символов
+ * 2. Проверяет на соответствие правилам валидации, заданным в соответствующем контроллере - обработчике запроса
+ * 3. Чистит html-теги
+ * 4. Применяет функцию htmlentities
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 trait Validation
 {
-    function validate($valueArr)
+
+    /**
+     * Основной метод, принимающий данные POST запроса, чистящий и валидирующий их
+     *
+     * @param array $formValues ассоциативный массив, задаваемый в соответствующем контроллере - обработчике запроса например:
+     * $defaultFormValues = ['name' => ['name' => 'имя','value' => '','errors' => '','rules' => 'required|min:2|max:100|nohtml',
+     * 'regExp' => '[\|]+','regExpContains' => 1,'regExpMessage' => 'не может содержать следующие символы: "`", "|"']];
+     * 1. Очищает их от концевых и множественных пробельных символов
+     * 2. Проверяет на соответствие правилам валидации, заданным в соответствующем контроллере - обработчике запроса
+     * 3. Чистит html-теги
+     * 4. Применяет функцию htmlentities
+     *
+     * @return array
+     */
+    public function cleanAndValidate($formValues)
+    {
+        foreach ($formValues as $firstKey => $secondKey) {
+            $formValues[$firstKey]['value'] = $_POST[$firstKey];
+        
+            // первичная очистка
+            $formValues[$firstKey]['value'] = self::cleanBefore($formValues[$firstKey]['value']);
+
+            // валидация
+            $formValues[$firstKey]['errors'] = self::validate($formValues[$firstKey]);
+
+            // дополнительная очистка
+            $formValues[$firstKey]['value'] = self::cleanAfter($formValues[$firstKey]['value']);
+        
+            // подготовка
+            $formValues[$firstKey]['value'] = self::prepareToPublishing($formValues[$firstKey]['value']);
+        }
+        
+        return $formValues;
+    }
+
+    /**
+     * Сравнивает входные данные с правилами валидации, возвращает текстовые сообщения об ошибках (если что-то не так)
+     *
+     * @param array $valueArr ассоциативный массив, задаваемый в соответствующем контроллере - обработчике запроса (для каждого поля формы - свой)
+     *
+     * @return string
+     */
+    private function validate($valueArr)
     {
         $errorText = '';
 
@@ -61,47 +117,54 @@ trait Validation
         
         return $errorText;
     }
-    
-    function cleanAndValidate($formValues)
-    {
-        foreach ($formValues as $firstKey => $secondKey) {
-            $formValues[$firstKey]['value'] = $_POST[$firstKey];
-        
-            // первичная очистка
-            $formValues[$firstKey]['value'] = self::cleanBefore($formValues[$firstKey]['value']);
 
-            // валидация
-            $formValues[$firstKey]['errors'] = self::validate($formValues[$firstKey]);
-
-            // дополнительная очистка
-            $formValues[$firstKey]['value'] = self::cleanAfter($formValues[$firstKey]['value']);
-        
-            // подготовка
-            $formValues[$firstKey]['value'] = self::prepareToPublishing($formValues[$firstKey]['value']);
-        }
-        
-        return $formValues;
-    }
-    
-    function cleanBefore($value)
+    /**
+     * Удаляет концевые и множественные пробельные символы
+     *
+     * @param string $value обрабатываемые данные
+     *
+     * @return string
+     */
+    private function cleanBefore($value)
     {
         $value = self::stripTabs(trim($value));
         return $value;
     }
-    
-    function cleanAfter($value)
+
+    /**
+     * Удаляет html-теги
+     *
+     * @param string $value обрабатываемые данные
+     *
+     * @return string
+     */
+    private function cleanAfter($value)
     {
         $value = strip_tags($value);
         return $value;
     }
 
-    function prepareToPublishing($value)
+    /**
+     * Применяет функцию htmlentities() к входным данным
+     *
+     * @param string $value обрабатываемые данные
+     *
+     * @return string
+     */
+    private function prepareToPublishing($value)
     {
         $value = htmlentities($value);
         return $value;
     }
-      
-    function stripTabs($text)
+
+    /**
+     * Удаляет концевые и множественные пробельные символы
+     *
+     * @param string $text обрабатываемые данные
+     *
+     * @return string
+     */
+    private function stripTabs($text)
 	{
 		$text=preg_replace("/([^\t\f ]*)[\t\f ]+([^\t\f ]*)/smi","$1 $2",$text);
 		$text=preg_replace("/([^ ]+)[ ]+([.,:!?;]+)/smi","$1$2",$text);

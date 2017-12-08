@@ -1,8 +1,28 @@
 <?php
+/**
+ * Скрипт для отправки писем из очереди
+ *
+ * Получает данные из очереди писем (из БД), форматирует тему письма,
+ * пробует отослать
+ * @throws \Exception если не удалось отправить письмо
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ * @package antonpavlov\personalsite
+ */
 namespace AntonPavlov\PersonalSite\cron;
 
-use AntonPavlov\PersonalSite\Models\SendMailModel;
+use AntonPavlov\PersonalSite\Models\MailModel;
 
+/**
+ * автозагрузчик классов
+ *
+ * автоматически загружает классы, если встречается 
+ * их имя во время выполнения скрипта
+ *
+ * @param string $name полное имя класса с учётом пространства имён
+ * @return void
+ */
 function autoLoader($name)
 {
     $name = preg_replace('/^AntonPavlov\\\\PersonalSite\\\\(.*)/siu', "$1", $name);
@@ -26,8 +46,8 @@ if ($referrer != '') {
 }
 
 $mailsPerTime = 10; // сколько писем за раз может отослать скрипт
-$mailDB = new SendMailModel();
 try {
+    $mailDB = new MailModel();
     $mailsToSend = $mailDB->get($mailsPerTime);
     
     for ($i=0; $i < count($mailsToSend); $i++) {

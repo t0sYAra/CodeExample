@@ -3,9 +3,30 @@ namespace AntonPavlov\PersonalSite\Base;
 
 use AntonPavlov\PersonalSite\Models\MailModel;
 
+/**
+ * Постановка письма в очередь рассылки (в БД)
+ *
+ * Форматирует текст, устанавливает headers и вставляет письмо в очередь рассылки
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 trait MailSender
 {
 
+    /**
+     * Форматирует текст, устанавливает headers и вставляет письмо в очередь рассылки
+     *
+     * @param string $toWhom email получателя
+     * @param string $subject тема письма
+     * @param string $body текст письма
+     *
+     * @throws \Exception если не удалось вставить запись о письме к отправке в БД
+     *
+     * @return string
+     */
 	function putMailToQueue($toWhom, $subject, $body)
 	{
         $body = preg_replace("/^\s+(.*)\s+$/miu", "$1", $body);
@@ -17,9 +38,9 @@ trait MailSender
 		'X-Mailer: PHP/' . phpversion();
 
         $result = true;
-        
-        $newMail = new MailModel();
+
         try {
+            $newMail = new MailModel();
             $result = $newMail->save(trim($toWhom),trim($subject),$body,$headers);
         } catch (\Exception $e) {
             throw new \Exception('Ошибка постановки задания на отправку письма в очередь - 2');

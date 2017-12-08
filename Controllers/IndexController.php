@@ -4,8 +4,22 @@ namespace AntonPavlov\PersonalSite\Controllers;
 use AntonPavlov\PersonalSite\Base\Controller;
 use AntonPavlov\PersonalSite\Base\RandomHelper;
 
+/**
+ * Контроллер, обрабатывающий запрос на загрузку главной страницы сайта
+ *
+ * @package AntonPavlov\PersonalSite
+ *
+ * @author Anton Pavlov <mail@antonpavlov.ru>
+ *
+ */
 class IndexController extends Controller
 {
+
+    /**
+     * Выводит главную страницу сайта
+     *
+     * @return void
+     */
 	function indexAction()
 	{
 		$this->view->includeViewFile
