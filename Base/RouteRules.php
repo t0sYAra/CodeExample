@@ -90,6 +90,18 @@ class RouteRules
                 'controller' => 'CaptchaController',
                 'action' => 'generateCaptcha',
                 'include' => ''
+            ],
+            [
+                'regExp' => '\/add\/?',
+                'controller' => 'EntryController',
+                'action' => 'addEntry',
+                'include' => ''
+            ],
+            [
+                'regExp' => '\/logout\/?',
+                'controller' => 'LogoutController',
+                'action' => 'logout',
+                'include' => ''
             ]
         ];
         return self::$rules;

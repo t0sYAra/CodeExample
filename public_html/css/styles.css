@@ -413,6 +413,9 @@ input.inputtext, input.inputcaptcha {
 	border-radius: 0.2rem;
 	vertical-align: middle;
 }
+input.heading {
+    width: 98%;
+}
 textarea.textarea {
 	font-family:"Times New Roman",Times,Tahoma;
 	background-color: #ffffff;
@@ -422,6 +425,13 @@ textarea.textarea {
 	height: 8em;
 	padding: 0.3em;
 	border-radius: 0.2rem;
+}
+textarea.entrytext {
+    height: 16em;
+}
+textarea.entrytags {
+    height: 5em;
+    width: 50%;
 }
 input.formsubmit {
 	background-color: #dedede;
@@ -745,8 +755,14 @@ input.inputtext, input.inputcaptcha {
 	width: 75%;
 	font-size: 110%;
 }
+input.heading {
+    width: 98%;
+}
 textarea.textarea {
 	font-size: 110%;
+}
+textarea.entrytags {
+    width: 75%;
 }
 img.showpic {
 	max-width: 424px;
@@ -869,6 +885,9 @@ input.inputtext {
 input.inputcaptcha {
 	width: 60%;
 	font-size: 130%;
+}
+textarea.entrytags {
+    width: 90%;
 }
 div.epigraf1 {
 	width: 25%;
@@ -1026,6 +1045,9 @@ input.inputtext {
 input.inputcaptcha {
 	width: 45%;
 	font-size: 130%;
+}
+textarea.entrytags {
+    width: 90%;
 }
 div.epigraf1 {
 	width: 15%;

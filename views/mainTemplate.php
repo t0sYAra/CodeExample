@@ -79,7 +79,8 @@ var ifShowMobMenu=1;
 <div class="nizmntext">
 <a href="<?=$pathStart?>blog" class="anizmn">последние записи</a><br>
 <a href="<?=$pathStart?>blog/best" class="anizmn">лучшие записи</a><br>
-<a href="<?=$pathStart?>poisk" class="anizmn">поиск</a>
+<a href="<?=$pathStart?>poisk" class="anizmn">поиск</a><br>
+<a href="<?=$pathStart?>add" class="anizmn">добавить запись</a>
 </div>
 </div>
 <div class="nizmn1">
@@ -92,6 +93,11 @@ var ifShowMobMenu=1;
 <div class="nizmnzag">Email</div>
 <div class="nizmntext">
 <a href="mailto:mail@antonpavlov.ru" class="anizmn">mail@antonpavlov.ru</a>
+<?php
+if ($authorized) {
+    echo '<br><br><br><a href="'.$pathStart.'logout" class="anizmn">выйти</a>';
+}
+?>
 </div>
 
 </div>
@@ -100,7 +106,7 @@ var ifShowMobMenu=1;
 <div class="mnline2" id="mnline2" name="mnline2"></div>
 
 <div class="copyright">© t0sYAra 2000-<?=date('Y')?></div>
-<div class="copyright"></div>
+<div class="copyright"><!--LiveInternet counter--><script type="text/javascript">document.write('<a href="http://www.liveinternet.ru/click" target=_blank><img src="http://counter.yadro.ru/hit?t26.10;r' + escape(document.referrer) + ((typeof(screen)=='undefined')?'':';s'+screen.width+'*'+screen.height+'*'+(screen.colorDepth?screen.colorDepth:screen.pixelDepth)) + ';u' + escape(document.URL) + ';' + Math.random() + '" border=0 width=88 height=15 alt="" title="LiveInternet: показано число посетителей за сегодн\я"><\/a>')</script><!--/LiveInternet--></div>
 
 </div>
 </div>

@@ -1,6 +1,8 @@
 <?php
 namespace AntonPavlov\PersonalSite\Base;
 
+use AntonPavlov\PersonalSite\Base\Authorizer;
+
 /**
  * Класс представления
  *
@@ -62,6 +64,8 @@ class View
                 $prefetchFiles.='<link rel="prefetch" href="'.$pathStart.'img/'.$prefetchArr[$i].'">'.PHP_EOL;
                 }
 		}
+        
+        $authorized = Authorizer::getStatus();
 
         // подключаем файл шаблона (а он уже внутри себя подключит контент и т.п.)
 		include_once __DIR__.'/../views/'.$templateViewFile;

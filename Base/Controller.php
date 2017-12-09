@@ -1,6 +1,8 @@
 <?php
 namespace AntonPavlov\PersonalSite\Base;
 
+use AntonPavlov\PersonalSite\Base\Authorizer;
+
 /**
  * Класс-предок для всех контроллеров
  *
@@ -87,8 +89,9 @@ class Controller
         // путь к ресурсам из папки public_html
         $this->pathStart = $this->pathToResources();
         $reg->set('pathStart',$this->pathStart);
-        
-        
+
+        // инициализируем данные авторизации
+        Authorizer::init();
     }
         
     /**

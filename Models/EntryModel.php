@@ -165,5 +165,43 @@ class EntryModel extends Model
 
         return $resultsArr;
     }
-       
+    
+    /**
+     * Сохраняет новую запись в БД
+     *
+     * @param string $translittedHeading транслитерированный заголовок записи
+     * @param string $heading заголовок записи
+     * @param string $epigraph эпиграф
+     * @param string $text текст записи
+     * @param string $author имя автора
+     * @param int $rating рейтинг записи от 0 и выше
+     * @param int $ifShow 1 - показывать, 0 - нет
+     *
+     * @throws \Exception если не удалось записать комментарий в БД
+     *
+     * @return void
+     */
+    public function saveEntry($translittedHeading, $heading, $epigraph, $text, $author, $rating, $ifShow)
+    {
+        $published = Date('Y-m-d H:i:s');
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $query = $this->initDB()->prepare('INSERT INTO `entries` values (null,?,?,?,?,?,?,?,?,?,?,?)');  
+        $query->bindParam(1, $translittedHeading);
+        $query->bindParam(2, $heading);
+        $query->bindParam(3, $epigraph);
+        $query->bindParam(4, $text);
+        $query->bindParam(5, $author);
+        $query->bindParam(6, $rating);
+        $query->bindParam(7, $ifShow);
+        $query->bindParam(8, $published);
+        $query->bindParam(9, $ip);
+        $query->bindParam(10, $published);
+        $query->bindParam(11, $ip);
+        $result = $query->execute();
+        
+        if (!$result) {
+            throw new \Exception('Ошибка публикации записи');
+        }
+    }
+      
 }

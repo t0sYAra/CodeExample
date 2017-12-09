@@ -22,7 +22,7 @@ class EntryController extends Controller
 {
 
     /**
-     * Возвращает конфигурационный массив
+     * Возвращает конфигурационный массив для добавления комментария
      *
      * Возвращает конфигурационный массив для каждого поля формы (нужен, если со страницы отправлен POST-запрос).
      * В массиве содержатся значения полей формы по умолчанию, правила валидации данных и сообщения об ошибках.
@@ -32,7 +32,7 @@ class EntryController extends Controller
      *
      * @return array
      */
-    private function getDefaultFormValues()
+    private function getDefaultAddCommentFormValues()
     {
         $defaultFormValues = [
             'parentCommentsId' => [
@@ -74,6 +74,161 @@ class EntryController extends Controller
         ];
         return $defaultFormValues;
     }
+
+    /**
+     * Возвращает конфигурационный массив для добавления записи
+     *
+     * Возвращает конфигурационный массив для каждого поля формы (нужен, если со страницы отправлен POST-запрос).
+     * В массиве содержатся значения полей формы по умолчанию, правила валидации данных и сообщения об ошибках.
+     * Для правил ($defaultFormValues[$n]['rules']) возможны следующие варианты: required, min:_, max:_, nohtml (указываются через запятую)
+     * Также можно задать RegExp шаблон ($defaultFormValues[$n]['regExp']) для проверки на совпадение ($defaultFormValues[$n]['regExpContains'] = 1)
+     * или несовпадение ($defaultFormValues[$n]['regExpContains'] = 0)
+     *
+     * @return array
+     */
+    private function getDefaultAddFormValues()
+    {
+        $defaultFormValues = [
+            'heading' => [
+                'name' => 'заголовок',
+                'value' => '',
+                'errors' => '',
+                'rules' => 'required|min:2|max:250|nohtml',
+                'regExp' => '[`\|]+',
+                'regExpContains' => 1,
+                'regExpMessage' => 'не может содержать следующие символы: "`", "|"'
+            ],
+            'epigraph' => [
+                'name' => 'эпиграф',
+                'value' => '',
+                'errors' => '',
+                'rules' => 'max:1000|nohtml',
+                'regExp' => '[`\|]+',
+                'regExpContains' => 1,
+                'regExpMessage' => 'не может содержать следующие символы: "`", "|"'
+            ],
+            'text' => [
+                'name' => 'текст',
+                'value' => '',
+                'errors' => '',
+                'rules' => 'required|min:2|max:10000|nohtml',
+                'regExp' => '[`\|]+',
+                'regExpContains' => 1,
+                'regExpMessage' => 'не может содержать следующие символы: "`", "|"'
+            ],
+            'tags' => [
+                'name' => 'теги',
+                'value' => '',
+                'errors' => '',
+                'rules' => 'required|min:2|max:1000|nohtml',
+                'regExp' => '^([-_ 0-9a-zа-яё]{2,250}[\r\n]*)+$',
+                'regExpContains' => 0,
+                'regExpMessage' => 'могут быть только из букв, цифр, пробела и знаков тире и подчёркивания'
+            ],
+            'accessCode' => [
+                'name' => 'код',
+                'value' => '',
+                'errors' => '',
+                'rules' => 'required|access',
+                'regExp' => '^[-_a-z0-9]{1,16}$',
+                'regExpContains' => 0,
+                'regExpMessage' => 'введён неправильно'
+            ]
+        ];
+        return $defaultFormValues;
+    }
+
+    /**
+     * Добавляет новую запись в БД
+     *
+     * Добавляет новую запись в блог.
+     * Обрабатывает данные, отправленные из формы добавления записи.
+     * Если пройдена валидация - сохраняет запись в БД.
+     *
+     * @return void
+     */
+	public function addEntry()
+	{
+        // значения по умолчанию
+        $title = 'Новая запись';
+        $descr = 'Публикация новой записи в блоге';
+        
+        // обрабатываем возможно присланную запись
+        $defaultFormValues = $this->getDefaultAddFormValues();
+        $formValues = $defaultFormValues;
+        $status = '';
+        $errors = '';
+        $posted = false;
+        if ((isset($_POST['heading']))&&(isset($_POST['text']))&&(isset($_POST['tags']))&&(isset($_POST['accessCode']))) {
+            $posted = true;
+            
+            // проверяем и очищаем данные
+            $formValues = Validation::cleanAndValidate($defaultFormValues);
+            
+            // склеиваем ошибки
+            foreach ($formValues as $firstKey => $secondKey) {
+                $errors .= PHP_EOL.$formValues[$firstKey]['errors'];
+            }
+            $errors = nl2br(trim(preg_replace('/['.PHP_EOL.']+/miu',PHP_EOL,$errors)));
+        }
+        
+        if (($posted)&&($errors==='')) {
+            // посланные данные в порядке, сохраняем в БД
+            
+            // записываем в БД
+            try {
+                
+                // форматируем теги
+                $formValues['tags']['value'] = preg_replace("/[\r\n]+/smiu", PHP_EOL, $formValues['tags']['value']);
+                if ($formValues['tags']['value'] !== '') {
+                    $tags = explode(PHP_EOL, $formValues['tags']['value']);
+                    $formValues['tags']['value'] = '#'.implode(', #', $tags);
+                }
+
+                // транслитерируем заголовок
+                $translittedHeading = Formatter::translit($formValues['heading']['value']);
+                
+                // записываем заголовок и теги в основной текст (для упрощения поиска)
+                $formValues['text']['value'] = 'zag111'.$formValues['heading']['value'].'zag999'.PHP_EOL.PHP_EOL.$formValues['text']['value'].PHP_EOL.PHP_EOL.'tgg111'.$formValues['tags']['value'].'tgg999';
+                
+                // сохраняем
+                $entry = new EntryModel();
+                $saveResult = $entry->saveEntry
+                    (
+                        $translittedHeading,
+                        $formValues['heading']['value'], 
+                        $formValues['epigraph']['value'], 
+                        $formValues['text']['value'], 
+                        'Антон Павлов',
+                        0,
+                        1
+                    );
+
+                $status = 'Запись опубликована. Спасибо';
+                $formValues = $defaultFormValues;
+            } catch (\Exception $e) {
+                $errors = 'Произошла ошибка во время записи в базу данных. Попробуйте добавить запись позже.';
+            }
+        }
+        
+		$this->view->includeViewFile
+        (
+            'addentry.php', // файл с контентом
+            'mainTemplate.php', // шаблон
+            '', // js-files
+            '', // prefetch
+            [
+                'title' => $title, // здесь и далее - дополнительные данные
+                'description' => $descr,
+                'heading' => $formValues['heading']['value'],
+                'text' => $formValues['text']['value'],
+                'tags' => $formValues['tags']['value'],
+                'accessCode' => $formValues['accessCode']['value'],
+                'errors' => $errors,
+                'status' => $status,
+            ]
+        );
+	}
 
     /**
      * Выводит на экран запись и комментарии к ней
@@ -126,7 +281,7 @@ class EntryController extends Controller
         $title = $entryArr['zag'];
         
         // обрабатываем возможно присланный комментарий
-        $defaultFormValues = $this->getDefaultFormValues();
+        $defaultFormValues = $this->getDefaultAddCommentFormValues();
         $formValues = $defaultFormValues;
         $status = '';
         $errors = '';

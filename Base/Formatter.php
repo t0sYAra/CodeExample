@@ -354,4 +354,79 @@ trait Formatter
 	return '';
 	}
 
+    /**
+     * Возвращает транслитерированный текст
+     *
+     * @param string $text текст, который нужно транслитерировать
+     *
+     * @return string
+     */
+    function translit($text)
+    {
+        $text  =  trim($text); // убираем пробелы в начале и конце строки
+        $text  =  strip_tags(mb_strtolower($text)); // убираем HTML-теги
+        $text  =  preg_replace("/[\s\n\r\t]+/siu", ' ', $text); // удаляем повторяющие пробелы
+        $text  =  preg_replace("/[^0-9a-za-я-_ ]/siu", "", $text); // очищаем строку от недопустимых символов
+        $text  =  preg_replace("/([_ ]+)/siu", "_", $text);
+
+        $pastletter = '';
+        $arr = preg_split('/(?<!^)(?!$)/siu',$text);
+        $k = 0;
+        
+        for ($i = 0; $i < count($arr); $i++) {
+            if ($arr[$i] == 'а') {$newarr[$k] = 'a';}
+            if ($arr[$i] == 'б') {$newarr[$k] = 'b';}
+            if ($arr[$i] == 'в') {$newarr[$k] = 'v';}
+            if ($arr[$i] == 'г') {$newarr[$k] = 'g';}
+            if ($arr[$i] == 'д') {$newarr[$k] = 'd';}
+            if ($arr[$i] == 'е') {$newarr[$k] = 'e';}
+            if ($arr[$i] == 'ё') {$newarr[$k] = 'yo';}
+            if ($arr[$i] == 'ж') {$newarr[$k] = 'zh';}
+            if ($arr[$i] == 'з') {$newarr[$k] = 'z';}
+            if ($arr[$i] == 'и') {$newarr[$k] = 'i';}
+            if ($arr[$i] == 'й') {$newarr[$k] = 'j';}
+            if ($arr[$i] == 'к') {$newarr[$k] = 'k';}
+            if ($arr[$i] == 'л') {$newarr[$k] = 'l';}
+            if ($arr[$i] == 'м') {$newarr[$k] = 'm';}
+            if ($arr[$i] == 'н') {$newarr[$k] = 'n';}
+            if ($arr[$i] == 'о') {$newarr[$k] = 'o';}
+            if ($arr[$i] == 'п') {$newarr[$k] = 'p';}
+            if ($arr[$i] == 'р') {$newarr[$k] = 'r';}
+            if ($arr[$i] == 'с') {$newarr[$k] = 's';}
+            if ($arr[$i] == 'т') {$newarr[$k] = 't';}
+            if ($arr[$i] == 'у') {$newarr[$k] = 'u';}
+            if ($arr[$i] == 'ф') {$newarr[$k] = 'f';}
+            if ($arr[$i] == 'х') {
+                if (($pastletter == 'c')||($pastletter == 's')||($pastletter == 'e')||($pastletter == 'h')) {
+                    $newarr[$k] = 'kh';
+                } else {
+                    $newarr[$k] = 'h';
+                }
+            }
+            if ($arr[$i] == 'ц') {$newarr[$k] = 'c';}
+            if ($arr[$i] == 'ч') {$newarr[$k] = 'ch';}
+            if ($arr[$i] == 'ш') {$newarr[$k] = 'sh';}
+            if ($arr[$i] == 'щ') {$newarr[$k] = 'shch';}
+            if ($arr[$i] == 'ъ') {$newarr[$k] = '';}
+            if ($arr[$i] == 'ы') {$newarr[$k] = 'y';}
+            if ($arr[$i] == 'ь') {$newarr[$k] = '';}
+            if ($arr[$i] == 'э') {$newarr[$k] = 'eh';}
+            if ($arr[$i] == 'ю') {$newarr[$k] = 'yu';}
+            if ($arr[$i] == 'я') {$newarr[$k] = 'ya';}
+
+            if (preg_match("/^[-_0-9a-z]$/",$arr[$i]) == 1) {
+                $newarr[$k] = $arr[$i];
+            }
+
+            $pastletter = $newarr[$k];
+            $k++;
+        }
+        
+    $newtext = implode('', $newarr);
+    $newtext  =  preg_replace("/(_\-_)+/iu", "_", $newtext);
+    
+    return $newtext;
+}
+
+
 }

@@ -3,6 +3,8 @@ namespace AntonPavlov\PersonalSite\Base;
 
 use AntonPavlov\PersonalSite\Base\Formatter;
 use AntonPavlov\PersonalSite\Base\RandomHelper;
+use AntonPavlov\PersonalSite\Base\Authorizer;
+use AntonPavlov\PersonalSite\Exceptions\NotAuthorizedException;
 
 /**
  * Валидация даных, присланных из формы
@@ -67,7 +69,7 @@ trait Validation
         $errorText = '';
 
         // проверяем обязательность заполнения
-        if ((mb_strpos('required',$valueArr['rules'])!==0)&&($valueArr['value']=='')) {
+        if ((preg_match('/required/siu',$valueArr['rules'])===1)&&($valueArr['value']=='')) {
             $error[] = 'Необходимо заполнить поле "'.$valueArr['name'].'"';
         }
 
@@ -110,6 +112,14 @@ trait Validation
             unset($_SESSION['icndhcak']);
         }
 
+        // проверяем доступ
+        if ((preg_match('/access/siu',$valueArr['rules'])===1)&&(empty($error))) {
+            try {
+                Authorizer::tryAuth('antonpavlov', $valueArr['value']);
+            } catch (NotAuthorizedException $e) {
+                $error[] = $e->getMessage();
+            }
+        }
         
         if (isset($error)) {
             $errorText = implode(PHP_EOL,$error);
